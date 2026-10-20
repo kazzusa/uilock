@@ -74,12 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
             child: CircleButton(
               onPressed: _addSchedule,
               child: Icon(Icons.add),
-              onPressed: () async {
-                final result = await showScheduleCard(context);
-              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       backgroundColor: const Color.fromARGB(255, 44, 45, 47),
     );
