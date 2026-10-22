@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 /// One saved schedule. This is what the home screen keeps in its list.
 class Schedule {
-  final TimeOfDay start;
-  final TimeOfDay end;
+  TimeOfDay start;
+  TimeOfDay end;
 
   /// 0 = Sunday, 1 = Monday, ... 6 = Saturday
-  final Set<int> days;
+  Set<int> days;
 
   /// Controls the status bar on the saved card.
   /// true  = green bar (schedule is active)

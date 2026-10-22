@@ -37,22 +37,22 @@ class ScheduleCard extends StatefulWidget {
 }
 
 class _ScheduleCardState extends State<ScheduleCard> {
-  late TimeOfDay _start;
-  late TimeOfDay _end;
+  TimeOfDay? _start;
+  TimeOfDay? _end;
   late Set<int> _days;
 
   @override
   void initState() {
     super.initState();
-    _start = widget.initial?.start ?? const TimeOfDay(hour: 9, minute: 0);
-    _end = widget.initial?.end ?? const TimeOfDay(hour: 17, minute: 0);
+    _start = widget.initial?.start;
+    _end = widget.initial?.end;
     _days = {...?widget.initial?.days};
   }
 
   Future<void> _pickTime({required bool isStart}) async {
     final picked = await showTimePicker(
       context: context,
-      initialTime: isStart ? _start : _end,
+      initialTime: (isStart ? _start : _end) ?? TimeOfDay.now(),
     );
     if (picked == null) return;
     setState(() {
@@ -133,11 +133,15 @@ class _ScheduleCardState extends State<ScheduleCard> {
                 const SizedBox(width: 8),
                 FilledButton(
                   // Disabled until at least one day is chosen.
-                  onPressed: _days.isEmpty
+                  onPressed: (_days.isEmpty || _start == null || _end == null)
                       ? null
                       : () => Navigator.pop(
                           context,
-                          ScheduleResult(start: _start, end: _end, days: _days),
+                          ScheduleResult(
+                            start: _start!,
+                            end: _end!,
+                            days: _days,
+                          ),
                         ),
                   child: const Text('Save'),
                 ),
@@ -153,7 +157,7 @@ class _ScheduleCardState extends State<ScheduleCard> {
 /// A tappable box that shows a label and a time.
 class _TimeTile extends StatelessWidget {
   final String label;
-  final TimeOfDay time;
+  final TimeOfDay? time;
   final VoidCallback onTap;
 
   const _TimeTile({
@@ -164,37 +168,29 @@ class _TimeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
-        ),
-        const SizedBox(height: 8),
-        Material(
-          color: const Color(0xFF303030),
-          borderRadius: BorderRadius.circular(16),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: onTap,
-            child: SizedBox(
-              height: 56,
-              child: Center(
-                child: Text(
-                  time.format(context),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+    final t = time;
+    final isEmpty = t == null;
+
+    return Material(
+      color: const Color(0xFF303030),
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          height: 56,
+          child: Center(
+            child: Text(
+              isEmpty ? label : t.format(context),
+              style: TextStyle(
+                color: isEmpty ? Colors.grey.shade500 : Colors.white,
+                fontSize: isEmpty ? 14 : 18,
+                fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
               ),
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

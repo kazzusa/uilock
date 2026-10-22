@@ -3,6 +3,7 @@ import 'package:uilock/models/schedule.dart';
 import 'package:uilock/widgets/circle_button.dart';
 import 'package:uilock/widgets/saved_schedule_card.dart';
 import 'package:uilock/widgets/schedule_card.dart';
+import 'package:uilock/widgets/schedule_info_card.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,12 +40,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       _schedules.add(
-        Schedule(
-          start: result.start,
-          end: result.end,
-          days: result.days,
-        ),
+        Schedule(start: result.start, end: result.end, days: result.days),
       );
+
+      for (final s in _schedules) {
+        debugPrint(
+          'Start: ${s.start.hour}:${s.start.minute} | '
+          'End: ${s.end.hour}:${s.end.minute} | '
+          'Days: ${s.days} | '
+          'Enabled: ${s.isEnabled}',
+        );
+      }
     });
   }
 
@@ -66,7 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
           for (final schedule in _schedules)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: SavedScheduleCard(schedule: schedule),
+              child: SavedScheduleCard(
+                schedule: schedule,
+                onTap: () => showScheduleInfo(
+                  context,
+                  schedule,
+                  onChanged: () => setState(() {}),
+                ),
+              ),
             ),
           // Center is needed: a ListView forces its children to full width,
           // and Center lets the button keep its own circle size.
