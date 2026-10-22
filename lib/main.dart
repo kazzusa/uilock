@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       _schedules.add(
-        Schedule(start: result.start, end: result.end, days: result.days),
+        Schedule(name: result.name, start: result.start, end: result.end, days: result.days),
       );
 
       for (final s in _schedules) {

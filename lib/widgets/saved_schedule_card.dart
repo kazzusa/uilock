@@ -25,7 +25,7 @@ class SavedScheduleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Container(
+      child: Material(
         color: _cardColor,
         child: InkWell(
           onTap: onTap,
@@ -37,27 +37,59 @@ class SavedScheduleCard extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(18, 14, 23, 14),
                 child: Row(
                   children: [
-                    _TimeBlock(
-                      label: 'Time Start',
-                      value: _format(schedule.start),
-                    ),
-                    const SizedBox(width: 20),
-                    _TimeBlock(label: 'Time End', value: _format(schedule.end)),
-                    const Spacer(),
-                    ...List.generate(7, (i) {
-                      final selected = schedule.days.contains(i);
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 6),
-                        child: Text(
-                          _letters[i],
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: selected ? _accent : _dayOff,
-                          ),
+                    // LEFT: the name of the session
+                    Expanded(
+                      child: Text(
+                        schedule.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
-                      );
-                    }),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+
+                    // RIGHT: times on top, days underneath
+                    IntrinsicWidth(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _TimeBlock(
+                                label: 'Time Start',
+                                value: _format(schedule.start),
+                              ),
+                              const SizedBox(width: 16),
+                              _TimeBlock(
+                                label: 'Time End',
+                                value: _format(schedule.end),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(7, (i) {
+                              final selected = schedule.days.contains(i);
+                              return Text(
+                                _letters[i],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: selected ? _accent : _dayOff,
+                                ),
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -101,7 +133,7 @@ class _TimeBlock extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            fontSize: 24,
+            fontSize: 22,
             color: Colors.white,
             letterSpacing: 1,
           ),

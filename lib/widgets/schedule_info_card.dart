@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'schedule_card.dart';
+
 import '../models/schedule.dart';
+import 'schedule_card.dart';
 
 /// Opens the information panel for one saved schedule.
 /// [onChanged] is called every time something in the schedule changes,
@@ -47,17 +48,23 @@ class _ScheduleInfoCardState extends State<ScheduleInfoCard> {
     widget.onChanged?.call();
   }
 
-  Future<void> _changeTime() async {
+  Future<void> _editSession() async {
     final s = widget.schedule;
 
     // Open the same card as "add", but with the current values filled in.
     final result = await showScheduleCard(
       context,
-      initial: ScheduleResult(start: s.start, end: s.end, days: s.days),
+      initial: ScheduleResult(
+        name: s.name,
+        start: s.start,
+        end: s.end,
+        days: s.days,
+      ),
     );
     if (result == null || !mounted) return; // Back was pressed
 
     setState(() {
+      s.name = result.name;
       s.start = result.start;
       s.end = result.end;
       s.days = result.days;
@@ -78,14 +85,28 @@ class _ScheduleInfoCardState extends State<ScheduleInfoCard> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Session name
+            SizedBox(
+              width: double.infinity,
+              child: Text(
+                s.name,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
             // Time start and time end
             Row(
               children: [
                 Expanded(
-                  child: _InfoTime(
-                    label: 'Time Start',
-                    value: _format(s.start),
-                  ),
+                  child: _InfoTime(label: 'Time Start', value: _format(s.start)),
                 ),
                 const SizedBox(width: 24),
                 Expanded(
@@ -120,9 +141,9 @@ class _ScheduleInfoCardState extends State<ScheduleInfoCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _PillButton(
-                      label: 'Change Time',
+                      label: 'Edit Session',
                       color: _accent,
-                      onPressed: _changeTime,
+                      onPressed: _editSession,
                     ),
                     const SizedBox(height: 10),
                     _PillButton(
