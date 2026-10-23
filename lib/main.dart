@@ -4,6 +4,7 @@ import 'package:uilock/widgets/circle_button.dart';
 import 'package:uilock/widgets/saved_schedule_card.dart';
 import 'package:uilock/widgets/schedule_card.dart';
 import 'package:uilock/widgets/schedule_info_card.dart';
+import 'package:uilock/screens/productivity_home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +41,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       _schedules.add(
-        Schedule(name: result.name, start: result.start, end: result.end, days: result.days),
+        Schedule(
+          name: result.name,
+          start: result.start,
+          end: result.end,
+          days: result.days,
+        ),
       );
 
       for (final s in _schedules) {
@@ -63,6 +69,16 @@ class _MyHomePageState extends State<MyHomePage> {
           widget.title,
           style: TextStyle(color: const Color.fromARGB(255, 119, 5, 250)),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.visibility, color: Colors.white54),
+            tooltip: 'Preview productivity mode (temporary)',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProductivityHomeScreen()),
+            ),
+          ),
+        ],
       ),
       // The add button is the LAST item of the list, so it moves down
       // by itself every time a card is added above it.
